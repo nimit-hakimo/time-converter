@@ -1,0 +1,61 @@
+/* Overall page styling */
+body {
+    background-color: #E1EDFF; /* Light blue background */
+    color: #080D41;           /* Hakimo Blue */
+    font-family: Arial, sans-serif;
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  /* Headings */
+  h1 {
+    text-align: center;
+    color: #FFC13E; /* Accent color for the heading */
+  }
+  
+  /* Labels */
+  label {
+    display: block;
+    margin: 15px 0 5px;
+    font-weight: bold; 
+  }
+  
+  /* Inputs and dropdowns */
+  input, select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: #FCFCFC; /* Off-white background for form fields */
+    border: 1px solid #080D41; /* Navy border to match text */
+    color: #080D41;            /* Navy text */
+    border-radius: 5px;
+  }
+  
+  /* Button */
+  button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: #FFC13E; /* Accent color background */
+    border: none;
+    color: #080D41;            /* Navy text on the button */
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #FCFCFC; /* Off-white hover */
+    color: #080D41;           /* Keep text navy */
+    border: 1px solid #FFC13E;
+  }
+  
+  /* Result text */
+  #result {
+    margin-top: 20px;
+    font-weight: bold;
+    background-color: #FCFCFC; /* Off-white background for clarity */
+    padding: 10px;
+    border: 1px solid #080D41; /* Navy border */
+    color: #080D41;            /* Navy text */
+  }

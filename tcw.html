@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Time Zone Converter</title>
+    <!-- Luxon (global build) -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Time Zone Converter</h1>
+
+    <!-- Text input for time -->
+    <label for="timeInput">Enter Time:</label>
+    <input 
+      type="text" 
+      id="timeInput" 
+      placeholder="e.g. 8:00 AM, 08:00, 14:30" 
+    />
+
+    <!-- From Time Zone -->
+    <label for="fromZone">From Time Zone:</label>
+    <select id="fromZone"></select>
+
+    <!-- To Time Zone -->
+    <label for="toZone">To Time Zone:</label>
+    <select id="toZone"></select>
+
+    <!-- Convert button -->
+    <button onclick="convertTime()">Convert</button>
+
+    <!-- Display the result -->
+    <div id="result"></div>
+
+    <script>
+      // PARTIAL list of IANA time zones for demonstration.
+      // You can replace this with a fully comprehensive list or fetch from an external source.
+      const timeZones = [
+        "Africa/Abidjan",
+        "Africa/Accra",
+        "Africa/Addis_Ababa",
+        "Africa/Algiers",
+        "Africa/Cairo",
+        "Africa/Casablanca",
+        "Africa/Johannesburg",
+        "Africa/Lagos",
+        "Africa/Nairobi",
+        "America/Anchorage",
+        "America/Argentina/Buenos_Aires",
+        "America/Belize",
+        "America/Chicago",
+        "America/Denver",
+        "America/Guatemala",
+        "America/Halifax",
+        "America/Los_Angeles",
+        "America/Mexico_City",
+        "America/New_York",
+        "America/Phoenix",
+        "America/Santiago",
+        "America/Sao_Paulo",
+        "America/Toronto",
+        "America/Vancouver",
+        "Asia/Bangkok",
+        "Asia/Beirut",
+        "Asia/Dubai",
+        "Asia/Ho_Chi_Minh",
+        "Asia/Hong_Kong",
+        "Asia/Jerusalem",
+        "Asia/Karachi",
+        "Asia/Kathmandu",
+        "Asia/Kolkata",
+        "Asia/Kuala_Lumpur",
+        "Asia/Riyadh",
+        "Asia/Seoul",
+        "Asia/Shanghai",
+        "Asia/Singapore",
+        "Asia/Tokyo",
+        "Atlantic/Reykjavik",
+        "Australia/Adelaide",
+        "Australia/Brisbane",
+        "Australia/Darwin",
+        "Australia/Perth",
+        "Australia/Sydney",
+        "Europe/Amsterdam",
+        "Europe/Athens",
+        "Europe/Berlin",
+        "Europe/Brussels",
+        "Europe/Budapest",
+        "Europe/Dublin",
+        "Europe/Helsinki",
+        "Europe/Istanbul",
+        "Europe/Lisbon",
+        "Europe/London",
+        "Europe/Madrid",
+        "Europe/Moscow",
+        "Europe/Oslo",
+        "Europe/Paris",
+        "Europe/Rome",
+        "Europe/Stockholm",
+        "Europe/Vienna",
+        "Europe/Zurich",
+        "Pacific/Auckland",
+        "Pacific/Fiji",
+        "Pacific/Honolulu",
+        "UTC"
+      ];
+
+      // Populate the time zone dropdowns after the page loads
+      window.addEventListener("DOMContentLoaded", () => {
+        const fromZoneSelect = document.getElementById("fromZone");
+        const toZoneSelect = document.getElementById("toZone");
+
+        // Populate time zones
+        timeZones.forEach((tz) => {
+          // fromZone
+          const fromOpt = document.createElement("option");
+          fromOpt.value = tz;
+          fromOpt.textContent = tz;
+          fromZoneSelect.appendChild(fromOpt);
+
+          // toZone
+          const toOpt = document.createElement("option");
+          toOpt.value = tz;
+          toOpt.textContent = tz;
+          toZoneSelect.appendChild(toOpt);
+        });
+
+        // Optionally, set defaults (e.g., local time zone for both)
+        const localZone = luxon.DateTime.local().zoneName;
+        fromZoneSelect.value = localZone;
+        toZoneSelect.value = "UTC";
+      });
+
+      // Function to convert time from one time zone to another
+      function convertTime() {
+        const timeInput = document.getElementById("timeInput").value.trim();
+        const fromZone = document.getElementById("fromZone").value;
+        const toZone = document.getElementById("toZone").value;
+        const resultDiv = document.getElementById("result");
+
+        // Clear previous result
+        resultDiv.innerText = "";
+
+        // Basic validation
+        if (!timeInput || !fromZone || !toZone) {
+          resultDiv.innerText = "Please enter a time and select both time zones.";
+          return;
+        }
+
+        const { DateTime } = luxon;
+
+        // Attempt to parse the time. 
+        // If your users might enter multiple formats, you could try a set of patterns 
+        // or use fromString (if it looks like an ISO string).
+        // Here we'll try "h:mm a" for "8:00 AM" or "hh:mm a" for times like "08:00 AM".
+        // If you expect 24-hour format ("14:30"), try "H:mm" or "HH:mm".
+        // We'll attempt multiple patterns in sequence.
+        let dateTime = DateTime.fromFormat(timeInput, "h:mm a", { zone: fromZone });
+        if (!dateTime.isValid) {
+          // Try 24-hour format
+          dateTime = DateTime.fromFormat(timeInput, "H:mm", { zone: fromZone });
+        }
+
+        // If still invalid, show error
+        if (!dateTime.isValid) {
+          resultDiv.innerText = 
+            "Could not parse the time. Please use a valid time format, e.g. '8:00 AM' or '14:30'.";
+          return;
+        }
+
+        // Convert to the target zone
+        const converted = dateTime.setZone(toZone);
+
+        if (!converted.isValid) {
+          resultDiv.innerText = 
+            "The 'To Zone' is invalid. Please check your selection.";
+          return;
+        }
+
+        // Format the converted time
+        // e.g. TIME_WITH_SHORT_OFFSET => "8:00 AM GMT+0"
+        const outputString = converted.toLocaleString(DateTime.TIME_WITH_SHORT_OFFSET);
+
+        // Display the result
+        resultDiv.innerText = `Converted Time: ${outputString} (${converted.zoneName})`;
+      }
+    </script>
+  </body>
+</html>
